@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+<html>
+
+<head>
+    {% block title%}
+    <title>View Blog</title>
+    {% endblock %}
+</head>
+
+<body>
+
+    {% block content %}
+
+    <div class="container">
+        <div class="row row1">
+            <div class="title">
+                <h2>{{View_detail.title}}</h2>
+            </div>
+            <div class="description">
+                <p>{{View_detail.description}}</p>
+                <h5 class="text-center">{{View_detail.category}}</h5>
+            </div>
+            <div class="foot-div">
+                <div class="author">
+                    <h4>{{View_detail.author_name}}</h4>
+                </div>
+                <div class="create-date">
+                    <h4>{{View_detail.create_date}}</h4>
+                </div>
+            </div>
+            <div class="sec-btn">
+                <div class="delete">
+                    <a href="{% url 'delete' View_detail.id %}"><button class="btn btn-danger" type="button"
+                            value="Delete">Delete</button></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endblock %}
+
+</body>
+
+</html>

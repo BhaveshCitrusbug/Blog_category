@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+<html>
+    <head></head>
+    <body>
+
+        {% block content %}
+        <div class="container">
+            <form action="#" method="post">
+                {% csrf_token %}
+                <div class="category">
+                    <h2>Category</h2>
+                    <select class="form-select" aria-label="Default select example" name="category">
+                        {% for i in blog.category %}
+                        {{i|capfirst}}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="title">
+                    <h2>Title</h2>
+                    <div class="input-group mb-3">
+                        <input type="text" name="title" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                </div>
+                <div class="title">
+                    <h2>Description</h2>
+                    <div class="input-group mb-3">
+                        <textarea name="description" rows="10" class="form-control" ></textarea>
+                    </div>
+                </div>
+                <div class="title">
+                    <h2>Author</h2>
+                    <div class="input-group mb-3">
+                        <input type="text" name="author" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <input type="submit" class="btn btn-primary btn-lg" value="Submit">
+                </div>
+            </form>
+        </div>
+        {% endblock %}
+    </body>
+</html>
