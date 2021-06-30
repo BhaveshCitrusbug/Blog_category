@@ -45,8 +45,6 @@ def blog_list(request,name=None,datef=None,datet=None,search=None):
     blog_data=None
     date_search_data=None
 
-
-
     if name and datef and datet and search and sort:
         blog_data=Blog.objects.filter(category__name=name,title__contains=search,publised_date__gte=datef,publised_date__lte=datet).order_by(sort)
     elif name and datef and datet and search:
@@ -110,3 +108,29 @@ def blog_list(request,name=None,datef=None,datet=None,search=None):
 
     }
     return render(request,'home.html',context)
+
+def index(request,id=None):
+    category_data=Category.objects.all()
+    blog=Blog.objects.all()
+    if 'searchData' in request.GET:
+        search = request.GET.get('searchData', '')
+        blog=blog.filter(title__contains=search)
+    if 'datef' in request.GET:
+        datef = request.GET.get('datef', '')
+        blog=blog.filter(publised_date__gte=datef)
+    if 'datet' in request.GET:
+        datet = request.GET.get('datet', '')
+        blog=blog.filter(publised_date__lte=datet)
+    if 'sort' in request.GET:
+        sort = request.GET.get('sort', '')
+        blog=blog.order_by(sort)
+
+    if id:
+        blog=blog.filter(category__id=id)
+
+    paginator = Paginator(blog, 2)
+    page_number = request.GET.get('page')
+    blog_data = paginator.get_page(page_number)
+    return render(request,'index.html',{'blog_data':blog_data,'category_data':category_data})
+
+

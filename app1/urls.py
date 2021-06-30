@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import base,blog_add,blog_list,delete,view_blog
+from .views import base,blog_add,blog_list,delete,view_blog,index
 
 urlpatterns = [
     path('base/',base,name='base'),
@@ -11,6 +11,8 @@ urlpatterns = [
     path('index/<str:name>/<str:search>/<str:datef>/<str:datet>/',blog_list,name="search_category_date"),
     path("delete/<int:id>/",delete,name="delete"),
     path('view/<int:id>/',view_blog,name='view'),
+    path('home/',index,name='home'),
+    path('home/<int:id>/',index,name='category_home')
 
 
 
