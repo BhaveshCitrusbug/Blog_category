@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load post %}
+<html>
+
+
+    <head>
+{% block title%}
+    <title>My blog</title>
+    {% endblock %}
+    </head>
+    {% block body %}
+    <body onload="getQueryData()">
+    {% endblock %}
+        {% block category %}
+                {% if blog_data %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Category
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      {% for i in category_data %}
+                    <li><a class="dropdown-item" href="{% url 'category_home' id=i.id %}">{{i.name}}</a></li>
+                      {% endfor %}
+                  </ul>
+                {% endif %}
+
+
+
+        {% endblock %}
+
+        {% block sort %}
+        <!-- For making sorting functionality -->
+        <select name="sort" id="sort-list" onchange="location = finalurl();" style="margin-left: auto;">
+            <option value="" id="placeholder" disabled selected hidden>Sort</option>
+            <option id="price" value="id">sort: new To old</option>
+            <option id="-price" value="-id">Price: old To new</option>
+.
+        </select>
+        {% endblock %}
+
+         {% block date %}
+               <form class="d-flex">
+            from:
+            <input class="form-control me-2" type="date" name='datef' id="datef" onchange="setDatef(this)">
+            to:
+            <input class="form-control me-2" type="date" name='datet' id="datet" onchange="setDatet(this)">
+            <input type="hidden" id="hdn_searchData" name='searchData'>
+                   <input type="hidden" id="hdn_category" name='category'>
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+         {% endblock %}
+
+         {% block search %}
+      <form class="d-flex">
+            <input class="form-control me-2" type="hidden" id="hdn_datef" name='datef'>
+            <input class="form-control me-2" type="hidden" id="hdn_datet" name='datet'>
+            <input type="hidden" id="hdn_category" name='category'>
+            <input class="form-control me-2" type="text" placeholder="Search" name="searchData" id="searchData" aria-label="Search" onchange="setSearch(this)">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+          {% endblock %}
+
+        {% block content %}
+        {% if blog_data %}
+        {% for i in blog_data %}
+        <div class="container mb-4">
+            <div class="text-center">
+                <a href="{% url 'view' id=i.id %}" style="text-decoration: none; color: black;"><h2>{{i.title|capfirst}}</h2></a>
+            </div>
+            <div>
+                <p>{{i.description|capfirst|truncatewords:50}}</p>
+            </div>
+            <div>
+                <div class="text-start">
+                    <h4>{{i.author|capfirst}}</h4>
+                </div>
+                <div class="text-end">
+                    <h4>{{i.publised_date}}</h4>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+         {% endif %}
+
+    {%if blog_data %}
+    <div class="container">
+    <div class="pagination justify-content-center mt-5 mb-5" id="pagination">
+    <span class="step-links">
+        {% if blog_data.has_previous %}
+            <a href="?{% add_to_current_url page=1%}">&laquo; first</a>
+            <a href="?{% add_to_current_url page=blog_data.previous_page_number %}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ blog_data.number }} of {{ blog_data.paginator.num_pages }}.
+        </span>
+
+        {% if blog_data.has_next %}
+            <a href="?{% add_to_current_url page=blog_data.next_page_number %}">next</a>
+            <a href="?{% add_to_current_url page=blog_data.paginator.num_pages %}">last &raquo;</a>
+        {% endif %}
+    </span>
+    </div>
+    </div>
+        {% endif %}
+
+
+        <script>
+  // for getting the sorting status to be displayed in sorting dropdown placeholder
+  function get(name) {
+    if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))  //location.search give query sling part
+      return decodeURIComponent(name[1]);
+  }
+
+  if(get('ordering'))
+  document.getElementById('placeholder').innerHTML = "Sort: " + document.getElementById(get('ordering')).innerHTML;
+
+  if(get('price'))
+  document.getElementById('category-placeholder').innerHTML = "Price: " + document.getElementById('pr'+get('price')).innerHTML;
+
+
+
+
+
+
+  // for getting url after applying ordering
+  function finalurl() {
+    var url = new URL(window.location.href);
+    var search_params = url.searchParams;
+    search_params.set('sort', document.getElementById("sort-list").value);
+    url.search = search_params.toString();
+    var new_url = url.toString();
+    return new_url
+  }
+
+  // for getting url after applying price filtering
+  function finalurl2() {
+    var url = new URL(window.location.href);
+    var search_params = url.searchParams;
+    search_params.set('category', document.getElementById("category-list").value);
+    url.search = search_params.toString();
+    var new_url = url.toString();
+    return new_url
+  }
+
+</script>
+<script>
+  function setDatef(e) {
+    console.log(e.value);
+    document.getElementById('hdn_datef').value = e.value;
+  }
+  function setCategory(e) {
+    console.log(e.value);
+    document.getElementById('hdn_category').value = e.value;
+  }
+  function setSearch(e) {
+    console.log(e.value);
+    document.getElementById('hdn_searchData').value = e.value;
+  }
+  function setDatet(e) {
+    console.log(e.value);
+    document.getElementById('hdn_datet').value = e.value;
+  }
+  function getQueryData() {
+    var query = location.search.slice(1, location.search.length);
+    query = query.split('&');
+    console.log(query);
+    query.forEach((v)=>{
+      var fields = v.split('=');
+      if(fields[1]) {
+        document.getElementById(fields[0]).value = fields[1];
+        document.getElementById('hdn_' + fields[0]).value = fields[1];
+      }
+    })
+
+  }
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        {% endblock %}
+
+    </body>
+</html>
+
